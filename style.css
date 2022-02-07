@@ -2,10 +2,13 @@
   color: #ffffff;
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
     'Lucida Sans', Arial, sans-serif;
+  /* outline: 2px solid orange; */
 }
 
 body {
   background-color: #121213;
+
+  /* background-color: lightblue; */
 }
 .game-container {
   height: 90vh;
@@ -100,3 +103,32 @@ body {
   background-color: #538d4e !important;
   border: none !important;
 }
+
+/* RESPONSIVE */
+@media (max-width: 477px) {
+  .title-container {
+    width: 120px;
+    text-align: center;
+  }
+
+  .key-container {
+    width: 300px;
+    /* display: flex; */
+    /* flex-wrap: wrap; */
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .key-container button:nth-child(11) {
+    margin-left: 0px;
+  }
+
+  .key-container button:nth-child(20),
+  .key-container button:nth-child(28) {
+    width: 45px;
+  }
+  .tile-container {
+    width: 315px;
+  }
+}
+/* .title-container */

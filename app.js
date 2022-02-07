@@ -2,6 +2,10 @@ const tileDisplay = document.querySelector('.tile-container');
 const keyboard = document.querySelector('.key-container');
 const messageDisplay = document.querySelector('.message-container');
 
+//let wordle = 'SUPER';
+let definitionOfTheWord =
+  'A NUMERICAL SCALE USED TO COMPARE VARIABLES WITH ONE ANOTHER OR WITH SOME REFERENCE NUMBER (A VALUE ON A SCALE OF MEASUREMENT) DERIVED FROM A SERIES OF OBSERVED FACTS; CAN REVEAL RELATIVE CHANGES AS A FUNCTION OF TIME';
+
 let wordle;
 
 const getWordle = () => {
@@ -15,7 +19,28 @@ const getWordle = () => {
 };
 
 //! Тут надо будет раскоментить
-// getWordle();
+getWordle();
+
+//! Тут сейчас попробую  сделать запрос на получения определения
+const getDefinition = () => {
+  setTimeout(() => {
+    fetch(`http://localhost:8000/definition/?word=${wordle}`)
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(
+          'json из getDefinition',
+          json.noun.replaceAll('(nou)', '&&').toUpperCase()
+        );
+        definitionOfTheWord = json;
+      })
+      .catch((err) => console.log(err));
+  }, 2000);
+};
+
+getDefinition();
+
+console.log('definitionOfTheWord', definitionOfTheWord);
+
 const keys = [
   'Q',
   'W',
@@ -96,6 +121,7 @@ const handleClick = (letter) => {
     if (letter === 'ENTER') {
       checkRow();
       console.log('guessRows', guessRows);
+
       return;
     }
     addLetter(letter);
@@ -134,49 +160,59 @@ const checkRow = () => {
   const guess = guessRows[currentRow].join('');
   console.log('guess', guess);
 
+  //===================== НАЧАЛО УСЛОВИЯ
   if (currentTile > 4) {
     fetch(`http://localhost:8000/check/?word=${guess}`)
       .then((response) => response.json())
       .then((json) => {
-        console.log(json);
-
-        if (json === 'Entry word not found') {
-          showMessage('word not in found');
-
+        console.log('JSON из функции checkRow', json);
+        if (json == 'Entry word not found') {
+          showMessage('word not in list');
           return;
-        } else {
-          flipTitle();
-          console.log('guess is ' + guess, 'worlde is ' + wordle);
-          if (wordle === guess) {
-            showMessage('Magnificent!');
-            isGameOver = true;
-          } else {
-            if (currentRow >= 5) {
-              isGameOver = true;
-              showMessage('Game Over');
-              return;
-            }
-
-            if (currentRow < 5) {
-              currentRow++;
-              currentTile = 0;
-            }
-          }
         }
-      })
-      .catch((err) => console.log(err));
+      });
+    //====================================
+
+    //=====================================
+
+    flipTitle();
+    console.log('guess is ' + guess, 'worlde is ' + wordle);
+    if (wordle === guess) {
+      showMessage('Magnificent!');
+      isGameOver = true;
+      return;
+    } else {
+      if (currentRow >= 5) {
+        isGameOver = true;
+        showMessage('Game Over');
+        return;
+      }
+
+      if (currentRow < 5) {
+        console.log('current row', currentRow);
+        currentRow++;
+        currentTile = 0;
+        return;
+      }
+    }
   }
+  //============КОНЕЦ УСЛОВИЯ
 };
 
 const showMessage = (message) => {
   console.log('message', message);
   const messageElement = document.createElement('p');
   messageElement.textContent = message;
+  messageElement.style.marginBottom = '50px';
 
   messageDisplay.append(messageElement);
+  messageDisplay.style.marginTop = '25px';
+  messageDisplay.style.marginBottom = '25px';
 
   setTimeout(() => {
     messageDisplay.removeChild(messageElement);
+    messageDisplay.style.marginTop = '0px';
+    messageDisplay.style.marginBottom = '0px';
   }, 2000);
 };
 
@@ -221,3 +257,10 @@ const flipTitle = () => {
     }, 500 * index);
   });
 };
+
+// ADD CLUES
+
+function addMessageClue() {
+  console.log(definitionOfTheWord);
+}
+addMessageClue();

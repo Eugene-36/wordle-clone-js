@@ -54,4 +54,31 @@ app.get('/check', (req, res) => {
     });
 });
 
+// Тут получаю определение слова
+app.get('/definition', (req, res) => {
+  const word = req.query.word.toLowerCase();
+
+  console.log('word с Бэка', word);
+  const options = {
+    method: 'GET',
+    url: 'https://twinword-word-graph-dictionary.p.rapidapi.com/definition/',
+    params: { entry: word },
+    headers: {
+      'x-rapidapi-host': 'twinword-word-graph-dictionary.p.rapidapi.com',
+      'x-rapidapi-key': process.env.RAPID_API_KEY,
+    },
+  };
+
+  axios
+    .request(options)
+    .then((response) => {
+      //console.log(response.data.meaning.noun);
+      // ! В ЭТОМ МЕСТЕ ЗАВТРА ДО КОНЦА ДЕСТРУКТУРИЗИРУЙ. И сделать передаваймое слово с маленькой буквы
+      res.json(response.data.meaning);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+});
+
 app.listen(PORT, () => console.log('Server running on port ' + PORT));
