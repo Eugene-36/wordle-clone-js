@@ -3,10 +3,10 @@ const keyboard = document.querySelector('.key-container');
 const messageDisplay = document.querySelector('.message-container');
 
 //let wordle = 'SUPER';
-let definitionOfTheWord =
-  'A NUMERICAL SCALE USED TO COMPARE VARIABLES WITH ONE ANOTHER OR WITH SOME REFERENCE NUMBER (A VALUE ON A SCALE OF MEASUREMENT) DERIVED FROM A SERIES OF OBSERVED FACTS; CAN REVEAL RELATIVE CHANGES AS A FUNCTION OF TIME';
+//let definitionOfTheWord =
+//'A NUMERICAL SCALE USED TO COMPARE VARIABLES WITH ONE ANOTHER OR WITH SOME REFERENCE NUMBER (A VALUE ON A SCALE OF MEASUREMENT) DERIVED FROM A SERIES OF OBSERVED FACTS; CAN REVEAL RELATIVE CHANGES AS A FUNCTION OF TIME';
 
-let wordle;
+let wordle = 'SUPER';
 
 const getWordle = () => {
   fetch('http://localhost:8000/word')
@@ -27,19 +27,16 @@ const getDefinition = () => {
     fetch(`http://localhost:8000/definition/?word=${wordle}`)
       .then((response) => response.json())
       .then((json) => {
-        console.log(
-          'json из getDefinition',
-          json.noun.replaceAll('(nou)', '&&').toUpperCase()
-        );
-        definitionOfTheWord = json;
+        const result = json.noun.replaceAll('(nou)', '&&').toUpperCase();
+
+        addMessageClue(result);
+        // definitionOfTheWord = json;
       })
       .catch((err) => console.log(err));
   }, 2000);
 };
 
 getDefinition();
-
-console.log('definitionOfTheWord', definitionOfTheWord);
 
 const keys = [
   'Q',
@@ -259,8 +256,23 @@ const flipTitle = () => {
 };
 
 // ADD CLUES
+function addMessageClue(message) {
+  const elMsg = document.querySelector('.message-clue-container');
+  const cretEl = document.createElement('p');
+  const imgEl = document.createElement('img');
 
-function addMessageClue() {
-  console.log(definitionOfTheWord);
+  cretEl.style.color = '#b59f3a';
+
+  if (Boolean(message)) {
+    cretEl.textContent = message;
+    elMsg.append(cretEl);
+    imgEl.parentNode.removeChild(imgEl);
+  } else {
+    imgEl.src = './img/dog-photo.png';
+    elMsg.style.width = '180px';
+    elMsg.append(imgEl);
+  }
+  console.log('message', Boolean(message));
+  console.log(elMsg);
+  console.log('message', message);
 }
-addMessageClue();
