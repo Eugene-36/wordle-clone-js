@@ -6,7 +6,7 @@ const messageDisplay = document.querySelector('.message-container');
 //let definitionOfTheWord =
 //'A NUMERICAL SCALE USED TO COMPARE VARIABLES WITH ONE ANOTHER OR WITH SOME REFERENCE NUMBER (A VALUE ON A SCALE OF MEASUREMENT) DERIVED FROM A SERIES OF OBSERVED FACTS; CAN REVEAL RELATIVE CHANGES AS A FUNCTION OF TIME';
 
-let wordle = 'SUPER';
+let wordle;
 
 const getWordle = () => {
   fetch('http://localhost:8000/word')
@@ -276,3 +276,5 @@ function addMessageClue(message) {
   console.log(elMsg);
   console.log('message', message);
 }
+
+//addMessageClue();
