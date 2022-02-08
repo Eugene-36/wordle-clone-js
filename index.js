@@ -54,7 +54,6 @@ app.get('/check', (req, res) => {
     });
 });
 
-// Тут получаю определение слова
 app.get('/definition', (req, res) => {
   const word = req.query.word.toLowerCase();
 
@@ -72,9 +71,11 @@ app.get('/definition', (req, res) => {
   axios
     .request(options)
     .then((response) => {
-      //console.log(response.data.meaning.noun);
-      // ! В ЭТОМ МЕСТЕ ЗАВТРА ДО КОНЦА ДЕСТРУКТУРИЗИРУЙ. И сделать передаваймое слово с маленькой буквы
-      res.json(response.data.meaning);
+      res.json(
+        response.data.meaning.noun ||
+          response.data.meaning.adjective ||
+          response.data.meaning.verb
+      );
     })
     .catch((error) => {
       console.error(error);

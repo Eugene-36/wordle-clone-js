@@ -1,42 +1,37 @@
 const tileDisplay = document.querySelector('.tile-container');
 const keyboard = document.querySelector('.key-container');
 const messageDisplay = document.querySelector('.message-container');
-
-//let wordle = 'SUPER';
-//let definitionOfTheWord =
-//'A NUMERICAL SCALE USED TO COMPARE VARIABLES WITH ONE ANOTHER OR WITH SOME REFERENCE NUMBER (A VALUE ON A SCALE OF MEASUREMENT) DERIVED FROM A SERIES OF OBSERVED FACTS; CAN REVEAL RELATIVE CHANGES AS A FUNCTION OF TIME';
+const elMsg = document.querySelector('.message-clue-container');
 
 let wordle;
 
-const getWordle = () => {
-  fetch('http://localhost:8000/word')
-    .then((response) => response.json())
-    .then((json) => {
-      console.log(json);
-      wordle = json.toUpperCase();
-    })
-    .catch((err) => console.log(err));
-};
+async function getWordle() {
+  try {
+    let response = await fetch('http://localhost:8000/word');
+    let singleWord = await response.json();
 
-//! Тут надо будет раскоментить
+    wordle = singleWord.toUpperCase();
+    getDefinition(wordle);
+  } catch (error) {
+    console.log('messgae error', error);
+  }
+}
+
 getWordle();
 
-//! Тут сейчас попробую  сделать запрос на получения определения
-const getDefinition = () => {
-  setTimeout(() => {
-    fetch(`http://localhost:8000/definition/?word=${wordle}`)
-      .then((response) => response.json())
-      .then((json) => {
-        const result = json.noun.replaceAll('(nou)', '&&').toUpperCase();
+async function getDefinition(searchingWord) {
+  try {
+    let response = await fetch(
+      `http://localhost:8000/definition/?word=${searchingWord}`
+    );
+    let definition = await response.json();
 
-        addMessageClue(result);
-        // definitionOfTheWord = json;
-      })
-      .catch((err) => console.log(err));
-  }, 2000);
-};
-
-getDefinition();
+    const result = definition.replaceAll('(nou)', '&&').toUpperCase();
+    addMessageClue(result);
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 const keys = [
   'Q',
@@ -107,23 +102,18 @@ keys.forEach((key) => {
 });
 const handleClick = (letter) => {
   if (!isGameOver) {
-    console.log('clicked', letter);
-
     if (letter === '<<') {
       deleteLetter();
-      console.log('guessRows', guessRows);
+
       return;
     }
 
     if (letter === 'ENTER') {
       checkRow();
-      console.log('guessRows', guessRows);
 
       return;
     }
     addLetter(letter);
-
-    console.log('guessRows', guessRows);
   }
 };
 
@@ -155,27 +145,22 @@ const deleteLetter = () => {
 
 const checkRow = () => {
   const guess = guessRows[currentRow].join('');
-  console.log('guess', guess);
 
-  //===================== НАЧАЛО УСЛОВИЯ
   if (currentTile > 4) {
     fetch(`http://localhost:8000/check/?word=${guess}`)
       .then((response) => response.json())
       .then((json) => {
-        console.log('JSON из функции checkRow', json);
         if (json == 'Entry word not found') {
           showMessage('word not in list');
           return;
         }
       });
-    //====================================
-
-    //=====================================
 
     flipTitle();
-    console.log('guess is ' + guess, 'worlde is ' + wordle);
+
     if (wordle === guess) {
       showMessage('Magnificent!');
+      elMsg.parentNode.removeChild(elMsg);
       isGameOver = true;
       return;
     } else {
@@ -186,18 +171,15 @@ const checkRow = () => {
       }
 
       if (currentRow < 5) {
-        console.log('current row', currentRow);
         currentRow++;
         currentTile = 0;
         return;
       }
     }
   }
-  //============КОНЕЦ УСЛОВИЯ
 };
 
 const showMessage = (message) => {
-  console.log('message', message);
   const messageElement = document.createElement('p');
   messageElement.textContent = message;
   messageElement.style.marginBottom = '50px';
@@ -215,8 +197,6 @@ const showMessage = (message) => {
 
 const addColorToKey = (keyLetter, color) => {
   const key = document.getElementById(keyLetter);
-
-  console.log('addColorToKey', key);
 
   key.classList.add(color);
 };
@@ -245,8 +225,6 @@ const flipTitle = () => {
   });
 
   rowTiles.forEach((tile, index) => {
-    //const dataLetter = tile.getAttribute('data');
-
     setTimeout(() => {
       tile.classList.add('flip');
       tile.classList.add(guess[index].color);
@@ -257,7 +235,6 @@ const flipTitle = () => {
 
 // ADD CLUES
 function addMessageClue(message) {
-  const elMsg = document.querySelector('.message-clue-container');
   const cretEl = document.createElement('p');
   const imgEl = document.createElement('img');
 
@@ -266,15 +243,10 @@ function addMessageClue(message) {
   if (Boolean(message)) {
     cretEl.textContent = message;
     elMsg.append(cretEl);
-    imgEl.parentNode.removeChild(imgEl);
+   
   } else {
     imgEl.src = './img/dog-photo.png';
     elMsg.style.width = '180px';
     elMsg.append(imgEl);
   }
-  console.log('message', Boolean(message));
-  console.log(elMsg);
-  console.log('message', message);
 }
-
-//addMessageClue();
