@@ -243,7 +243,6 @@ function addMessageClue(message) {
   if (Boolean(message)) {
     cretEl.textContent = message;
     elMsg.append(cretEl);
-   
   } else {
     imgEl.src = './img/dog-photo.png';
     elMsg.style.width = '180px';
