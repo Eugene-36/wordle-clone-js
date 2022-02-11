@@ -11,6 +11,7 @@ async function getWordle() {
     let singleWord = await response.json();
 
     wordle = singleWord.toUpperCase();
+    console.log('wordle', wordle);
     getDefinition(wordle);
   } catch (error) {
     console.log('messgae error', error);
@@ -20,12 +21,15 @@ async function getWordle() {
 getWordle();
 
 async function getDefinition(searchingWord) {
+  console.log('searchingWord', searchingWord.toLowerCase());
+  let meddilware = searchingWord.toLowerCase();
   try {
     let response = await fetch(
       `http://localhost:8000/definition/?word=${searchingWord}`
     );
     let definition = await response.json();
 
+    console.log('definition', response);
     const result = definition.replaceAll('(nou)', '&&').toUpperCase();
     addMessageClue(result);
   } catch (error) {

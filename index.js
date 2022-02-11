@@ -58,7 +58,7 @@ app.get('/check', (req, res) => {
 app.get('/definition', (req, res) => {
   const word = req.query.word.toLowerCase();
 
-  console.log('word с Бэка', word);
+  console.log('word с Бэка', req);
   const options = {
     method: 'GET',
     url: 'https://twinword-word-graph-dictionary.p.rapidapi.com/definition/',
@@ -72,6 +72,7 @@ app.get('/definition', (req, res) => {
   axios
     .request(options)
     .then((response) => {
+      console.log('response.data.meaning', response);
       res.json(
         response.data.meaning.noun ||
           response.data.meaning.adjective ||
@@ -83,12 +84,12 @@ app.get('/definition', (req, res) => {
     });
 });
 
-app.get('*', (req, res) => {
-  res.sendFile(
-    path.resolve(__dirname, 'D:/_E/Projects/wordle-clone-js', 'index.html')
-  );
-});
+// app.get('*', (req, res) => {
+//   res.sendFile(
+//     path.resolve(__dirname, 'D:/_E/Projects/wordle-clone-js', 'index.html')
+//   );
+// });
 
-app.use(express.static(path.resolve(__dirname, 'build')));
+// app.use(express.static(path.resolve(__dirname, 'build')));
 
 app.listen(PORT, () => console.log('Server running on port ' + PORT));
